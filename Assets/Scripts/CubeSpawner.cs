@@ -4,36 +4,68 @@ using UnityEngine;
 public class CubeSpawner : MonoBehaviour
 {
     [SerializeField] private float _spawnInterval = 0.5f;
-    [SerializeField] private bool _isSpawning = true;
-
+    
     private CubePool _cubePool;
     private WaitForSeconds _spawnWait;
-    
-    private void Start()
-    {
-        _cubePool = FindObjectOfType<CubePool>();
-        
-        if (_cubePool == null)
-        {
-            Debug.LogError("CubePool не найден на сцене!");
-            return;
-        }
-        
-        _spawnWait = new WaitForSeconds(_spawnInterval);
-        StartCoroutine(SpawnCubesRoutine());
-    }
-    
-    private IEnumerator SpawnCubesRoutine()
-    {
-        while (_isSpawning == true)
-        {
-            _cubePool.GetCube();
-            yield return _spawnWait;
-        }
-    }
+    private Coroutine _spawnCoroutine;
+    private bool _isSpawning = false;
+    private bool _isInitialized = false;
 
     private void OnDestroy()
     {
-        StopAllCoroutines();
+        StopSpawning();
+    }
+
+    public void Initialize(CubePool cubePool)
+    {
+        _cubePool = cubePool;
+        _isInitialized = true;
+        
+        StartSpawning();
+    }
+
+    public void StartSpawning()
+    {
+        if (_isInitialized == true && _isSpawning == false && _spawnCoroutine == null)
+        {
+            _isSpawning = true;
+            _spawnWait = new WaitForSeconds(_spawnInterval);
+            _spawnCoroutine = StartCoroutine(SpawnRoutine());
+        }
+    }
+
+    public void StopSpawning()
+    {
+        _isSpawning = false;
+        
+        if (_spawnCoroutine != null)
+        {
+            StopCoroutine(_spawnCoroutine);
+            _spawnCoroutine = null;
+        }
+    }
+
+    private IEnumerator SpawnRoutine()
+    {
+        int spawnCount = 0;
+        
+        while (_isSpawning)
+        {
+            spawnCount++;
+            SpawnCube();
+            yield return _spawnWait;
+        }
+        
+        _spawnCoroutine = null;
+    }
+
+    private void SpawnCube()
+    {
+        if (_cubePool == null)
+        {
+            return;
+        }
+        
+        Cube cube = _cubePool.GetCube();
     }
 }

@@ -4,25 +4,57 @@ using UnityEngine.Pool;
 
 public class CubePool : MonoBehaviour
 {
-    private const float SpawnPositionY = 15f;
-    private const float SpawnAreaHalfSize = 10f;
-    
     [SerializeField] private Cube _cubePrefab;
     [SerializeField] private int _defaultCapacity = 20;
     [SerializeField] private int _maxPoolSize = 100;
 
-    private ObjectPool<Cube> _cubePool;
-    
-    public ObjectPool<Cube> Pool => _cubePool;
+    private ObjectPool<Cube> _objectPool;
+    private readonly List<Cube> _activeCubes = new List<Cube>();
 
     private void Awake()
     {
-        InitializePool();
+        Initialize();
     }
 
-    private void InitializePool()
+    private void OnDestroy()
     {
-        _cubePool = new ObjectPool<Cube>(
+        Cleanup();
+    }
+
+    public Cube GetCube()
+    {
+        if (_objectPool == null)
+        {
+            return null;
+        }
+        
+        try
+        {
+            Cube cube = _objectPool.Get();
+            _activeCubes.Add(cube);
+            
+            return cube;
+        }
+        catch (System.Exception e)
+        {
+            return null;
+        }
+    }
+
+    public void ReturnCube(Cube cube)
+    {
+        if (cube == null) return;
+        
+        if (_activeCubes.Contains(cube))
+        {
+            _activeCubes.Remove(cube);
+            _objectPool.Release(cube);
+        }
+    }
+
+    private void Initialize()
+    {
+        _objectPool = new ObjectPool<Cube>(
             createFunc: CreateCube,
             actionOnGet: OnTakeFromPool,
             actionOnRelease: OnReturnToPool,
@@ -31,24 +63,19 @@ public class CubePool : MonoBehaviour
             defaultCapacity: _defaultCapacity,
             maxSize: _maxPoolSize
         );
-        
-        List<Cube> prewarmCubes = new List<Cube>();
-        
-        for (int i = 0; i < _defaultCapacity; i++)
-        {
-            prewarmCubes.Add(_cubePool.Get());
-        }
-        
-        foreach (var cube in prewarmCubes)
-        {
-            _cubePool.Release(cube);
-        }
+
+        PrewarmPool();
     }
 
     private Cube CreateCube()
     {
+        if (_cubePrefab == null)
+        {
+            return null;
+        }
+        
         Cube newCube = Instantiate(_cubePrefab);
-        newCube.Initialize(this);
+        newCube.Expired += HandleCubeLifeTimeExpired;
         newCube.gameObject.SetActive(false);
         
         return newCube;
@@ -56,38 +83,79 @@ public class CubePool : MonoBehaviour
 
     private void OnTakeFromPool(Cube cube)
     {
-        Vector3 randomPosition = new Vector3(Random.Range(-SpawnAreaHalfSize, SpawnAreaHalfSize), 
-            SpawnPositionY, Random.Range(-SpawnAreaHalfSize, SpawnAreaHalfSize));
-        cube.transform.position = randomPosition;
+        if (cube == null)
+        {
+            return;
+        }
+        
         cube.gameObject.SetActive(true);
+        cube.transform.position = GetRandomSpawnPosition();
     }
 
     private void OnReturnToPool(Cube cube)
     {
-        cube.ResetCube();
+        if (cube == null)
+        {
+            return;
+        }
+        
         cube.gameObject.SetActive(false);
+        cube.Reset();
     }
 
     private void OnDestroyCube(Cube cube)
     {
+        if (cube == null)
+        {
+            return;
+        }
+        
+        cube.Expired -= HandleCubeLifeTimeExpired;
         Destroy(cube.gameObject);
     }
 
-    public Cube GetCube()
+    private void PrewarmPool()
     {
-        return _cubePool.Get();
-    }
-
-    public void ReturnCubeToPool(Cube cube)
-    {
-        _cubePool.Release(cube);
-    }
-
-    private void OnDestroy()
-    {
-        if (_cubePool != null)
+        List<Cube> prewarmCubes = new List<Cube>();
+        
+        for (int i = 0; i < _defaultCapacity; i++)
         {
-            _cubePool.Clear();
+            Cube cube = _objectPool.Get();
+            
+            if (cube != null)
+            {
+                prewarmCubes.Add(cube);
+            }
         }
+        
+        foreach (Cube cube in prewarmCubes)
+        {
+            _objectPool.Release(cube);
+        }
+    }
+
+    private void Cleanup()
+    {
+        foreach (Cube cube in _activeCubes.ToArray())
+        {
+            ReturnCube(cube);
+        }
+        
+        _objectPool?.Clear();
+    }
+
+    private void HandleCubeLifeTimeExpired(Cube cube)
+    {
+        ReturnCube(cube);
+    }
+
+    private Vector3 GetRandomSpawnPosition()
+    {
+        const float spawnPositionY = 15f;
+        const float spawnAreaHalfSize = 10f;
+        
+        return new Vector3(
+            Random.Range(-spawnAreaHalfSize, spawnAreaHalfSize), spawnPositionY, Random.Range(-spawnAreaHalfSize, spawnAreaHalfSize)
+        );
     }
 }

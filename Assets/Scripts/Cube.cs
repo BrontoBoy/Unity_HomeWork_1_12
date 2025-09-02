@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Cube : MonoBehaviour
 {
@@ -9,68 +11,77 @@ public class Cube : MonoBehaviour
     [SerializeField] private Color _initialColor = Color.white;
     [SerializeField] private Color _touchedColor = Color.red;
 
-    private Renderer _cubeRenderer;
     private bool _hasTouchedPlatform = false;
-    private CubePool _cubePool;
-    private WaitForSeconds _waitForLifetime;
+    
+    private Renderer _cubeRenderer;
+    private Rigidbody _cubeRigidbody;
+    private Coroutine _lifetimeCoroutine;
+
+    public event Action<Cube> Expired;
     
     private void Awake()
     {
         _cubeRenderer = GetComponent<Renderer>();
+        _cubeRigidbody = GetComponent<Rigidbody>();
+        
+        if (_cubeRigidbody != null)
+        {
+            _cubeRigidbody.useGravity = true;
+            _cubeRigidbody.isKinematic = false;
+        }
     }
 
     private void OnEnable()
     {
-        _hasTouchedPlatform = false;
-        _cubeRenderer.material.color = _initialColor;
+        Reset();
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.TryGetComponent(out Platform _) && _hasTouchedPlatform == false)
+        if (_hasTouchedPlatform == false && collision.gameObject.TryGetComponent(out Platform _))
         {
             HandlePlatformCollision();
         }
     }
-    
-    public void Initialize(CubePool cubePool)
+
+    public void Reset()
     {
-        _cubePool = cubePool;
+        _hasTouchedPlatform = false;
+
+        if (_cubeRenderer != null)
+        {
+            _cubeRenderer.material.color = _initialColor;
+        }
+
+        if (_cubeRigidbody != null)
+        {
+            _cubeRigidbody.linearVelocity = Vector3.zero;
+            _cubeRigidbody.angularVelocity = Vector3.zero;
+        }
+        
+        if (_lifetimeCoroutine != null)
+        {
+            StopCoroutine(_lifetimeCoroutine);
+            _lifetimeCoroutine = null;
+        }
     }
     
     private void HandlePlatformCollision()
     {
-        _cubeRenderer.material.color = _touchedColor;
         _hasTouchedPlatform = true;
+
+        if (_cubeRenderer != null)
+        {
+            _cubeRenderer.material.color = _touchedColor;
+        }
         
-        if (_waitForLifetime == null)
-        {
-            float lifetime = Random.Range(MinLifetime, MaxLifetime);
-            _waitForLifetime = new WaitForSeconds(lifetime);
-        }
-
-        StartCoroutine(CountdownToDeactivateCoroutine());
+        float lifetime = Random.Range(MinLifetime, MaxLifetime);
+        _lifetimeCoroutine = StartCoroutine(LifetimeCountdown(lifetime));
     }
 
-    private IEnumerator CountdownToDeactivateCoroutine()
+    private IEnumerator LifetimeCountdown(float lifetime)
     {
-        yield return _waitForLifetime;
-
-        if (_cubePool != null)
-        {
-            _cubePool.ReturnCubeToPool(this);
-        }
-        else
-        {
-            Debug.LogWarning("Ссылка на CubePool отсутствует! Уничтожаю объект.");
-            Destroy(gameObject);
-        }
-    }
-    
-    public void ResetCube()
-    {
-        _hasTouchedPlatform = false;
-        _cubeRenderer.material.color = _initialColor;
-        StopAllCoroutines();
+        yield return new WaitForSeconds(lifetime);
+        Expired?.Invoke(this);
     }
 }

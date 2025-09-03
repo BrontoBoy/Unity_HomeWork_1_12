@@ -259,7 +259,6 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585550}
-  - component: {fileID: 330585549}
   - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
@@ -399,21 +398,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnInterval: 0.5
---- !u!114 &330585549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3affec988786f68429d2d9fda93cb415, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   _cubePrefab: {fileID: -8201852752116410071, guid: 6e2a225837819ff458c5d8be0e2a8df1, type: 3}
   _defaultCapacity: 20
   _maxPoolSize: 100
+  _spawnPositionY: 15
+  _spawnAreaHalfSize: 10
 --- !u!114 &330585550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -426,7 +415,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615068a08d794da4fa8efc703890a74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cubePool: {fileID: 330585549}
   _cubeSpawner: {fileID: 330585548}
 --- !u!1 &410087039
 GameObject:

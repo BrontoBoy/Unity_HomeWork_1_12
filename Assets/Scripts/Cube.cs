@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+
+[RequireComponent(typeof(Renderer))]
+[RequireComponent(typeof(Rigidbody))]
 public class Cube : MonoBehaviour
 {
     private const float MinLifetime = 2f;
@@ -10,25 +13,19 @@ public class Cube : MonoBehaviour
 
     [SerializeField] private Color _initialColor = Color.white;
     [SerializeField] private Color _touchedColor = Color.red;
-
+    
+    public event Action<Cube> Expired;
+    
     private bool _hasTouchedPlatform = false;
     
     private Renderer _cubeRenderer;
     private Rigidbody _cubeRigidbody;
     private Coroutine _lifetimeCoroutine;
-
-    public event Action<Cube> Expired;
     
     private void Awake()
     {
         _cubeRenderer = GetComponent<Renderer>();
         _cubeRigidbody = GetComponent<Rigidbody>();
-        
-        if (_cubeRigidbody != null)
-        {
-            _cubeRigidbody.useGravity = true;
-            _cubeRigidbody.isKinematic = false;
-        }
     }
 
     private void OnEnable()
@@ -47,17 +44,9 @@ public class Cube : MonoBehaviour
     public void Reset()
     {
         _hasTouchedPlatform = false;
-
-        if (_cubeRenderer != null)
-        {
-            _cubeRenderer.material.color = _initialColor;
-        }
-
-        if (_cubeRigidbody != null)
-        {
-            _cubeRigidbody.linearVelocity = Vector3.zero;
-            _cubeRigidbody.angularVelocity = Vector3.zero;
-        }
+        _cubeRenderer.material.color = _initialColor;
+        _cubeRigidbody.linearVelocity = Vector3.zero;
+        _cubeRigidbody.angularVelocity = Vector3.zero;
         
         if (_lifetimeCoroutine != null)
         {
@@ -69,12 +58,7 @@ public class Cube : MonoBehaviour
     private void HandlePlatformCollision()
     {
         _hasTouchedPlatform = true;
-
-        if (_cubeRenderer != null)
-        {
-            _cubeRenderer.material.color = _touchedColor;
-        }
-        
+        _cubeRenderer.material.color = _touchedColor;
         float lifetime = Random.Range(MinLifetime, MaxLifetime);
         _lifetimeCoroutine = StartCoroutine(LifetimeCountdown(lifetime));
     }
@@ -82,6 +66,7 @@ public class Cube : MonoBehaviour
     private IEnumerator LifetimeCountdown(float lifetime)
     {
         yield return new WaitForSeconds(lifetime);
+        
         Expired?.Invoke(this);
     }
 }

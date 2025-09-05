@@ -60,10 +60,10 @@ public class Cube : MonoBehaviour
         _hasTouchedPlatform = true;
         _cubeRenderer.material.color = _touchedColor;
         float lifetime = Random.Range(MinLifetime, MaxLifetime);
-        _lifetimeCoroutine = StartCoroutine(LifetimeCountdown(lifetime));
+        _lifetimeCoroutine = StartCoroutine(CountdownLifetimeCoroutine(lifetime));
     }
 
-    private IEnumerator LifetimeCountdown(float lifetime)
+    private IEnumerator CountdownLifetimeCoroutine(float lifetime)
     {
         yield return new WaitForSeconds(lifetime);
         

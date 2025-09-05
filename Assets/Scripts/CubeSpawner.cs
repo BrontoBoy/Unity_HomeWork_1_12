@@ -83,7 +83,6 @@ public class CubeSpawner : MonoBehaviour
     private Cube CreateCube()
     {
         Cube newCube = Instantiate(_cubePrefab);
-        newCube.Expired += HandleCubeExpired;
         newCube.gameObject.SetActive(false);
         
         return newCube;
@@ -91,12 +90,14 @@ public class CubeSpawner : MonoBehaviour
 
     private void OnTakeFromPool(Cube cube)
     {
+        cube.Expired += HandleCubeExpired;
         cube.gameObject.SetActive(true);
         _activeCubes.Add(cube);
     }
 
     private void OnReturnToPool(Cube cube)
     {
+        cube.Expired -= HandleCubeExpired;
         cube.gameObject.SetActive(false);
         cube.Reset();
         _activeCubes.Remove(cube);

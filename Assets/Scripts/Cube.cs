@@ -1,31 +1,27 @@
-using System;
 using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-
 [RequireComponent(typeof(Renderer))]
 [RequireComponent(typeof(Rigidbody))]
-public class Cube : MonoBehaviour
+public class Cube : MonoBehaviour, IResettable
 {
     private const float MinLifetime = 2f;
     private const float MaxLifetime = 5f;
 
-    [SerializeField] private Color _initialColor = Color.white;
-    [SerializeField] private Color _touchedColor = Color.red;
-    
-    public event Action<Cube> Expired;
-    
-    private bool _hasTouchedPlatform = false;
-    
-    private Renderer _cubeRenderer;
-    private Rigidbody _cubeRigidbody;
-    private Coroutine _lifetimeCoroutine;
+    [SerializeField] private Color InitialColor = Color.white;
+    [SerializeField] private Color TouchedColor = Color.red;
+
+    private bool HasTouchedPlatform = false;
+    private Renderer CubeRenderer;
+    private Rigidbody CubeRigidbody;
+    private Coroutine LifetimeCoroutine;
+    private CubeSpawner CubeSpawner;
     
     private void Awake()
     {
-        _cubeRenderer = GetComponent<Renderer>();
-        _cubeRigidbody = GetComponent<Rigidbody>();
+        CubeRenderer = GetComponent<Renderer>();
+        CubeRigidbody = GetComponent<Rigidbody>();
     }
 
     private void OnEnable()
@@ -35,38 +31,53 @@ public class Cube : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (_hasTouchedPlatform == false && collision.gameObject.TryGetComponent(out Platform _))
+        if (HasTouchedPlatform == false && collision.gameObject.TryGetComponent(out Platform _))
         {
             HandlePlatformCollision();
         }
     }
 
-    public void Reset()
+    public void SetCubeSpawner(CubeSpawner spawner)
     {
-        _hasTouchedPlatform = false;
-        _cubeRenderer.material.color = _initialColor;
-        _cubeRigidbody.linearVelocity = Vector3.zero;
-        _cubeRigidbody.angularVelocity = Vector3.zero;
-        
-        if (_lifetimeCoroutine != null)
-        {
-            StopCoroutine(_lifetimeCoroutine);
-            _lifetimeCoroutine = null;
-        }
+        CubeSpawner = spawner;
     }
     
+    public void Reset()
+    {
+        HasTouchedPlatform = false;
+        CubeRenderer.material.color = InitialColor;
+        CubeRigidbody.linearVelocity = Vector3.zero;
+        CubeRigidbody.angularVelocity = Vector3.zero;
+
+        if (LifetimeCoroutine != null)
+        {
+            StopCoroutine(LifetimeCoroutine);
+            LifetimeCoroutine = null;
+        }
+    }
+
     private void HandlePlatformCollision()
     {
-        _hasTouchedPlatform = true;
-        _cubeRenderer.material.color = _touchedColor;
+        if (HasTouchedPlatform) return;
+
+        HasTouchedPlatform = true;
+        CubeRenderer.material.color = TouchedColor;
         float lifetime = Random.Range(MinLifetime, MaxLifetime);
-        _lifetimeCoroutine = StartCoroutine(CountdownLifetimeCoroutine(lifetime));
+        LifetimeCoroutine = StartCoroutine(CountdownLifetimeCoroutine(lifetime));
     }
 
     private IEnumerator CountdownLifetimeCoroutine(float lifetime)
     {
         yield return new WaitForSeconds(lifetime);
         
-        Expired?.Invoke(this);
+        if (CubeSpawner != null)
+        {
+            CubeSpawner.CreateBombAtPosition(transform.position);
+        }
+        
+        if (CubeSpawner != null)
+        {
+            CubeSpawner.ReturnToPool(this);
+        }
     }
 }

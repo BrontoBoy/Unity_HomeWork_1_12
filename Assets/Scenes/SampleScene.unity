@@ -478,12 +478,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: -8201852752116410071, guid: 6e2a225837819ff458c5d8be0e2a8df1, type: 3}
-  SpawnInterval: 0.5
-  DefaultCapacity: 20
+  DefaultCapacity: 30
   MaxPoolSize: 100
-  SpawnPositionY: 15
-  SpawnAreaHalfSize: 10
-  BombSpawner: {fileID: 330585551}
+  _spawnInterval: 0.5
+  _spawnPositionY: 15
+  _spawnAreaHalfSize: 10
+  _bombSpawner: {fileID: 330585551}
 --- !u!114 &330585550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -496,11 +496,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615068a08d794da4fa8efc703890a74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CubeSpawner: {fileID: 330585548}
-  BombSpawner: {fileID: 330585551}
-  CubeUI: {fileID: 1562505799}
-  BombUI: {fileID: 767403735}
-  UIUpdateInterval: 0.5
+  _cubeSpawner: {fileID: 330585548}
+  _bombSpawner: {fileID: 330585551}
+  _cubeUI: {fileID: 1562505802}
+  _bombUI: {fileID: 767403738}
+  _uIUpdateInterval: 0.5
 --- !u!114 &330585551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -514,11 +514,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Prefab: {fileID: -8993481762801896033, guid: 0b8ecde87536433458c20900caf9c4ab, type: 3}
-  SpawnInterval: 0.5
-  DefaultCapacity: 20
+  DefaultCapacity: 30
   MaxPoolSize: 100
-  SpawnPositionY: 15
-  SpawnAreaHalfSize: 10
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -661,7 +658,7 @@ GameObject:
   - component: {fileID: 767403734}
   - component: {fileID: 767403737}
   - component: {fileID: 767403736}
-  - component: {fileID: 767403735}
+  - component: {fileID: 767403738}
   m_Layer: 5
   m_Name: BombStatisticText (TMP)
   m_TagString: Untagged
@@ -688,19 +685,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 432.01, y: 168.76709}
   m_Pivot: {x: 1, y: 0}
---- !u!114 &767403735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 767403733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf7de2235229204e86b2091f11b167d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsForCubes: 1
 --- !u!114 &767403736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -803,6 +787,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 767403733}
   m_CullTransparentMesh: 1
+--- !u!114 &767403738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 767403733}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 150b9f5c32237c74f928f7e07a9ef8b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: {fileID: 767403736}
+  ObjectName: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1114,7 +1112,7 @@ GameObject:
   - component: {fileID: 1562505798}
   - component: {fileID: 1562505801}
   - component: {fileID: 1562505800}
-  - component: {fileID: 1562505799}
+  - component: {fileID: 1562505802}
   m_Layer: 5
   m_Name: CubeStatisticText (TMP)
   m_TagString: Untagged
@@ -1141,19 +1139,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 432.01, y: 168.76709}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1562505799
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1562505797}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0bf7de2235229204e86b2091f11b167d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsForCubes: 1
 --- !u!114 &1562505800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1256,6 +1241,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1562505797}
   m_CullTransparentMesh: 1
+--- !u!114 &1562505802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1562505797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bfeab7661c0502243be554243927d53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Text: {fileID: 1562505800}
+  ObjectName: 
 --- !u!1001 &780056146693434674
 PrefabInstance:
   m_ObjectHideFlags: 0

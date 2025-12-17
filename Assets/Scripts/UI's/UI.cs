@@ -1,38 +1,51 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.Serialization;
 
 public class UI : MonoBehaviour
 {
-    [SerializeField] private TMP_Text Text;
-    [SerializeField] private string Name;
+    [SerializeField] private TMP_Text _text;
+    [SerializeField] private string _name;
     
     private ISpawner _spawner;
     
     private void OnDestroy()
     {
         if (_spawner != null)
-            _spawner.StatsChanged -= UpdateText;
+        {
+            _spawner.SpawnedCountChanged -= OnCountChanged;
+            _spawner.CreatedCountChanged -= OnCountChanged;
+            _spawner.ActiveCountChanged -= OnCountChanged;
+        }
     }
     
     public void Initialize(string name, ISpawner spawner)
     {
-        Name = name;
+        _name = name;
         _spawner = spawner;
         
-        _spawner.StatsChanged += UpdateText;
+        if (_spawner != null)
+        {
+            _spawner.SpawnedCountChanged += OnCountChanged;
+            _spawner.CreatedCountChanged += OnCountChanged;
+            _spawner.ActiveCountChanged += OnCountChanged;
+        }
         
-        UpdateText(_spawner.TotalSpawned, _spawner.TotalCreated, _spawner.ActiveCount);
+        UpdateText();
     }
     
-    private void UpdateText(int spawned, int created, int active)
+    private void OnCountChanged(int value)
     {
-        if (Text != null)
+        UpdateText();
+    }
+    
+    private void UpdateText()
+    {
+        if (_spawner != null && _text != null)
         {
-            Text.text = $"{Name}\n" +
-                        $"Заспавнено: {spawned} шт.\n" +
-                        $"Создано: {created} шт.\n" +
-                        $"Активно: {active} шт.";
+            _text.text = $"{_name}\n" +
+                         $"Заспавнено: {_spawner.TotalSpawned} шт.\n" +
+                         $"Создано: {_spawner.TotalCreated} шт.\n" +
+                         $"Активно: {_spawner.ActiveCount} шт.";
         }
     }
 }

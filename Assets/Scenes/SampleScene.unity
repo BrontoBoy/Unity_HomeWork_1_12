@@ -338,8 +338,8 @@ GameObject:
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
   - component: {fileID: 330585550}
+  - component: {fileID: 330585549}
   - component: {fileID: 330585548}
-  - component: {fileID: 330585551}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -474,18 +474,31 @@ MonoBehaviour:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e0ef7b9fe6de31841b57bb85f6b0fd9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Prefab: {fileID: 2847640915526906194, guid: 0b8ecde87536433458c20900caf9c4ab, type: 3}
+  DefaultCapacity: 10
+  MaxPoolSize: 30
+--- !u!114 &330585549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330585543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67b1c5987e3b06947877d4febc2a8ee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: 6824116463259449896, guid: 6e2a225837819ff458c5d8be0e2a8df1, type: 3}
-  DefaultCapacity: 30
-  MaxPoolSize: 100
-  _minLifetime: 2
-  _maxLifetime: 5
+  Prefab: {fileID: 11232522361925447, guid: 6e2a225837819ff458c5d8be0e2a8df1, type: 3}
+  DefaultCapacity: 10
+  MaxPoolSize: 30
   _spawnInterval: 0.5
   _spawnPositionY: 15
   _spawnAreaHalfSize: 10
-  _bombSpawner: {fileID: 330585551}
+  _bombSpawner: {fileID: 330585548}
 --- !u!114 &330585550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -498,29 +511,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 615068a08d794da4fa8efc703890a74a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cubeSpawner: {fileID: 330585548}
-  _bombSpawner: {fileID: 330585551}
+  _cubeSpawner: {fileID: 330585549}
+  _bombSpawner: {fileID: 330585548}
   _cubeUI: {fileID: 1562505802}
   _bombUI: {fileID: 767403738}
---- !u!114 &330585551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0ef7b9fe6de31841b57bb85f6b0fd9e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Prefab: {fileID: 8250490304599633374, guid: 0b8ecde87536433458c20900caf9c4ab, type: 3}
-  DefaultCapacity: 30
-  MaxPoolSize: 100
-  _minLifetime: 2
-  _maxLifetime: 5
-  _explosionRadius: 5
-  _explosionForce: 500
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -804,8 +798,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bf7de2235229204e86b2091f11b167d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 767403736}
-  Name: 
+  _text: {fileID: 767403736}
+  _name: "\u0411\u043E\u043C\u0431\u044B"
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1258,8 +1252,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0bf7de2235229204e86b2091f11b167d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 1562505800}
-  Name: 
+  _text: {fileID: 1562505800}
+  _name: "\u041A\u0443\u0431\u044B"
 --- !u!1001 &780056146693434674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1312,7 +1306,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1641952482133138399, guid: 5b85aa0740feb8f43ad378cfeb449600, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

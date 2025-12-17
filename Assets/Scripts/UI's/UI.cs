@@ -1,27 +1,38 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.Serialization;
 
-public class UI<T> : MonoBehaviour where T : MonoBehaviour
+public class UI : MonoBehaviour
 {
-    [SerializeField] protected TMP_Text Text;
-    [SerializeField] protected string ObjectName;
-
-    protected Spawner<T> Spawner;
+    [SerializeField] private TMP_Text Text;
+    [SerializeField] private string Name;
     
-    public void Initialize(string name, Spawner<T> spawner)
+    private ISpawner _spawner;
+    
+    private void OnDestroy()
     {
-        ObjectName = name;
-        Spawner = spawner;
-        UpdateText();
+        if (_spawner != null)
+            _spawner.StatsChanged -= UpdateText;
     }
-    public void UpdateText()
+    
+    public void Initialize(string name, ISpawner spawner)
     {
-        if (Spawner != null)
+        Name = name;
+        _spawner = spawner;
+        
+        _spawner.StatsChanged += UpdateText;
+        
+        UpdateText(_spawner.TotalSpawned, _spawner.TotalCreated, _spawner.ActiveCount);
+    }
+    
+    private void UpdateText(int spawned, int created, int active)
+    {
+        if (Text != null)
         {
-            Text.text = $"{ObjectName}\n" +
-                       $"Заспавнено: {Spawner.TotalSpawned} шт.\n" +
-                       $"Создано: {Spawner.TotalCreated} шт.\n" +
-                       $"Активно: {Spawner.ActiveCount} шт.";
+            Text.text = $"{Name}\n" +
+                        $"Заспавнено: {spawned} шт.\n" +
+                        $"Создано: {created} шт.\n" +
+                        $"Активно: {active} шт.";
         }
     }
 }

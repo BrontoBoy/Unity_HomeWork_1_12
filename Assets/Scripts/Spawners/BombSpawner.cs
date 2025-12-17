@@ -1,17 +1,31 @@
 using UnityEngine;
 
-public class BombSpawner : Spawner<Bomb>
+public class BombSpawner : Spawner<BombPresenter>
 {
+    [SerializeField] private float _explosionRadius = 5f;
+    [SerializeField] private float _explosionForce = 500f;
+    
     public void SpawnBombAtPosition(Vector3 position)
     {
-        Bomb bomb = GetFromPool();
+        BombPresenter bomb = GetFromPool();
         bomb.transform.position = position;
-        bomb.BombExploded += HandleBombExploded;
     }
     
-    private void HandleBombExploded(Bomb bomb)
+    protected override void InitializePresenter(BombPresenter presenter)
     {
-        bomb.BombExploded -= HandleBombExploded;
-        ReturnToPool(bomb);
+        BombModel model = new BombModel(_minLifetime, _maxLifetime, _explosionRadius,
+            _explosionForce);
+        presenter.Initialize(model);
+    }
+    
+    protected override void SubscribeToPresenterEvents(BombPresenter presenter)
+    {
+        presenter.BombExploded += HandleBombExploded;
+    }
+    
+    private void HandleBombExploded(BombPresenter presenter)
+    {
+        presenter.BombExploded -= HandleBombExploded;
+        ReturnToPool(presenter);
     }
 }

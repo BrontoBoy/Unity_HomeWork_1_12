@@ -1,1 +1,0 @@
-public class CubeUI : UI<Cube> { }

@@ -477,9 +477,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67b1c5987e3b06947877d4febc2a8ee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: -8201852752116410071, guid: 6e2a225837819ff458c5d8be0e2a8df1, type: 3}
+  Prefab: {fileID: 6824116463259449896, guid: 6e2a225837819ff458c5d8be0e2a8df1, type: 3}
   DefaultCapacity: 30
   MaxPoolSize: 100
+  _minLifetime: 2
+  _maxLifetime: 5
   _spawnInterval: 0.5
   _spawnPositionY: 15
   _spawnAreaHalfSize: 10
@@ -500,7 +502,6 @@ MonoBehaviour:
   _bombSpawner: {fileID: 330585551}
   _cubeUI: {fileID: 1562505802}
   _bombUI: {fileID: 767403738}
-  _uIUpdateInterval: 0.5
 --- !u!114 &330585551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -513,9 +514,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0ef7b9fe6de31841b57bb85f6b0fd9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Prefab: {fileID: -8993481762801896033, guid: 0b8ecde87536433458c20900caf9c4ab, type: 3}
+  Prefab: {fileID: 8250490304599633374, guid: 0b8ecde87536433458c20900caf9c4ab, type: 3}
   DefaultCapacity: 30
   MaxPoolSize: 100
+  _minLifetime: 2
+  _maxLifetime: 5
+  _explosionRadius: 5
+  _explosionForce: 500
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -796,11 +801,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 767403733}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 150b9f5c32237c74f928f7e07a9ef8b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 0bf7de2235229204e86b2091f11b167d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Text: {fileID: 767403736}
-  ObjectName: 
+  Name: 
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1250,11 +1255,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1562505797}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfeab7661c0502243be554243927d53b, type: 3}
+  m_Script: {fileID: 11500000, guid: 0bf7de2235229204e86b2091f11b167d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Text: {fileID: 1562505800}
-  ObjectName: 
+  Name: 
 --- !u!1001 &780056146693434674
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1277,7 +1282,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8307100113825788140, guid: 5b85aa0740feb8f43ad378cfeb449600, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 4
+      value: 0.72
       objectReference: {fileID: 0}
     - target: {fileID: 8307100113825788140, guid: 5b85aa0740feb8f43ad378cfeb449600, type: 3}
       propertyPath: m_LocalRotation.w

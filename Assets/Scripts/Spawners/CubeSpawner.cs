@@ -1,38 +1,49 @@
 using UnityEngine;
 using System.Collections;
 
-public class CubeSpawner : Spawner<Cube>
+public class CubeSpawner : Spawner<CubePresenter>
 {
     [SerializeField] private float _spawnInterval = 0.5f;
     [SerializeField] private float _spawnPositionY = 15f;
     [SerializeField] private float _spawnAreaHalfSize = 10f;
     [SerializeField] private BombSpawner _bombSpawner;
-
+    
     private WaitForSeconds _spawnWait;
     private Coroutine _spawnCoroutine;
-    private bool _isSpawning = false; 
+    private bool _isSpawning = false;
     
     public override void Initialize()
     {
         base.Initialize();
-        StartSpawning();  
+        StartSpawning();
     }
     
     public void StartSpawning()
     {
         if (_isSpawning == false && _spawnCoroutine == null)
         {
-            _isSpawning = true; 
+            _isSpawning = true;
             _spawnWait = new WaitForSeconds(_spawnInterval);
             _spawnCoroutine = StartCoroutine(SpawnRoutine());
         }
+    }
+    
+    protected override void InitializePresenter(CubePresenter presenter)
+    {
+        CubeModel model = new CubeModel(_minLifetime, _maxLifetime);
+        presenter.Initialize(model);
+    }
+    
+    protected override void SubscribeToPresenterEvents(CubePresenter presenter)
+    {
+        presenter.CubeExpired += HandleCubeExpired;
     }
     
     private IEnumerator SpawnRoutine()
     {
         while (_isSpawning)
         {
-            SpawnCube(); 
+            SpawnCube();
             
             yield return _spawnWait;
         }
@@ -40,21 +51,18 @@ public class CubeSpawner : Spawner<Cube>
     
     private void SpawnCube()
     {
-        Cube cube = GetFromPool();
+        CubePresenter cube = GetFromPool();
         cube.transform.position = GetRandomSpawnPosition();
-        cube.CubeExpired += HandleCubeExpired;
     }
     
-    private void HandleCubeExpired(Cube cube, Vector3 position)
+    private void HandleCubeExpired(CubePresenter presenter, Vector3 position)
     {
-        cube.CubeExpired -= HandleCubeExpired;
+        presenter.CubeExpired -= HandleCubeExpired;
         
         if (_bombSpawner != null)
-        {
             _bombSpawner.SpawnBombAtPosition(position);
-        }
         
-        ReturnToPool(cube);
+        ReturnToPool(presenter);
     }
     
     private Vector3 GetRandomSpawnPosition()
